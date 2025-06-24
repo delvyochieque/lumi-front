@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 const api = axios.create({
-  baseURL: 'https://seu-backend.onrender.com',  // URL do seu backend no Render
+  baseURL: 'https://lumi-backend-vj4n.onrender.com',  // URL do backend no Render
   timeout: 30000, // Aumentado para 30 segundos
 });
 
