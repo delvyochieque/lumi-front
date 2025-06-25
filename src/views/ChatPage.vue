@@ -323,14 +323,12 @@ export default {
 .chat-messages {
   flex: 1;
   padding: 1rem;
-  padding-bottom: 6rem; /* Adicionado para dar espaço à chat-input */
   overflow-y: auto;
   display: flex;
   flex-direction: column;
   gap: 1rem;
   align-items: center;
 }
-
 
 .message {
   display: flex;
@@ -441,7 +439,7 @@ export default {
 }
 
 .chat-input input {
-  flex: 0 0 70%;
+  flex: 1;
   padding: 0.5rem;
   border: none;
   border-radius: 0.3rem;
@@ -449,7 +447,6 @@ export default {
   color: #000;
   font-size: 0.9rem;
 }
-
 
 .chat-input input:focus {
   outline: none;
