@@ -180,7 +180,13 @@ export default {
     scrollToBottom() {
       this.$nextTick(() => {
         const container = this.$refs.messagesContainer;
-        container.scrollTop = container.scrollHeight;
+        const input = this.$el.querySelector('.chat-input input');
+        if (container && !input.matches(':focus')) {
+          const isNearBottom = container.scrollHeight - container.scrollTop <= container.clientHeight + 100;
+          if (isNearBottom) {
+            container.scrollTop = container.scrollHeight;
+          }
+        }
       });
     },
     async speakMessage(text) {
@@ -308,38 +314,54 @@ export default {
   },
 };
 </script>
+
 <style scoped>
 .chat-container {
   display: flex;
   flex-direction: column;
-  min-height: 100vh;
-  background: #1E1E1E;
+  min-height: 100vh; /* Altura total da viewport */
+  background: #333;
   color: #FFFFFF;
-  padding-top: 4rem;
+  padding-top: 4rem; /* Espaço para AppHeader.vue */
+  padding-bottom: 6rem; /* Aumentado para evitar sobreposição do chat-input */
   box-sizing: border-box;
-  position: relative;
 }
 
 .chat-messages {
   flex: 1;
   padding: 1rem;
-  overflow-y: auto;
+  overflow-y: auto; /* Ativa scroll vertical */
   display: flex;
   flex-direction: column;
-  gap: 1rem;
-  align-items: center;
-  margin-bottom: 5rem; /* espaço para o input fixo */
+  gap: 20px;
+  max-height: calc(100vh - 10rem); /* Ajustado para header (4rem) + input (6rem) */
+  min-height: 0; /* Evita compressão */
+  scrollbar-width: auto;
+  scrollbar-color: #D3B911 #333;
+}
+
+.chat-messages::-webkit-scrollbar {
+  width: 8px;
+}
+
+.chat-messages::-webkit-scrollbar-track {
+  background: #333;
+}
+
+.chat-messages::-webkit-scrollbar-thumb {
+  background: #D3B911;
+  border-radius: 4px;
 }
 
 .message {
   display: flex;
-  max-width: 80%;
+  max-width: 90%;
   width: 100%;
+  margin-bottom: 0.5rem;
 }
 
 .user-message {
   justify-content: flex-end;
-  margin-bottom: 1rem;
 }
 
 .ia-message {
@@ -362,7 +384,7 @@ export default {
 }
 
 .ia-message .message-content {
-  background: #333;
+  background: #1E1E1E;
   color: #FFFFFF;
 }
 
@@ -404,32 +426,51 @@ export default {
   }
 }
 
-/* INPUT FIXO NO FUNDO */
 .chat-input {
   display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 0.5rem 1rem;
+  padding: 0.75rem 1rem;
   background: #D3B911;
   border-top: 1px solid #D3B911;
   gap: 0.5rem;
+  align-items: center;
+  border-radius: 20px;
+  margin: 0 1rem 1rem;
   position: fixed;
   bottom: 0;
   left: 0;
   right: 0;
-  z-index: 20;
-  max-width: 100vw;
+  z-index: 10;
   box-sizing: border-box;
-  margin-bottom: 20px;
+}
+
+.mic-btn {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 0.5rem;
+}
+
+.mic-btn:hover:not(:disabled) {
+  opacity: 0.8;
+}
+
+.mic-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.mic-icon {
+  font-size: 1.2rem;
+  color: #000;
 }
 
 .chat-input input {
-  flex: 0 0 70%;
-  padding: 0.5rem;
+  flex: 1;
+  padding: 0.75rem;
   border: none;
-  border-radius: 0.3rem;
-  background: #FFFFFF;
-  color: #000;
+  border-radius: 20px;
+  background: #000;
+  color: #fff;
   font-size: 0.9rem;
 }
 
@@ -458,40 +499,22 @@ export default {
   color: #000;
 }
 
-.mic-btn {
-  background: transparent;
-  border: none;
-  cursor: pointer;
-  padding: 0.5rem;
-}
-
-.mic-btn:hover:not(:disabled) {
-  opacity: 0.8;
-}
-
-.mic-btn:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-}
-
-.mic-icon {
-  font-size: 1.2rem;
-  color: #000;
-}
-
-/* Responsividade */
+/* Media Queries para Responsividade */
 @media (max-width: 640px) {
   .chat-container {
     padding-top: 3rem;
+    padding-bottom: 7rem; /* Aumentado para teclado virtual */
   }
 
   .chat-messages {
     padding: 0.5rem;
     gap: 0.5rem;
+    max-height: calc(100vh - 10rem); /* Ajustado para header (3rem) + input (7rem) */
   }
 
   .message {
-    max-width: 90%;
+    max-width: 95%;
+    margin-bottom: 0.3rem;
   }
 
   .message-content {
@@ -499,30 +522,98 @@ export default {
     font-size: 0.8rem;
   }
 
+  .speak-btn {
+    padding: 0.2rem;
+  }
+
+  .speak-icon {
+    font-size: 0.8rem;
+  }
+
+  .chat-input {
+    padding: 0.4rem 0.5rem;
+    margin: 0 0.5rem 0.5rem;
+    gap: 0.3rem;
+  }
+
+  .mic-btn, .chat-input button {
+    padding: 0.4rem;
+  }
+
+  .mic-icon, .send-icon {
+    font-size: 1rem;
+  }
+
   .chat-input input {
     font-size: 0.8rem;
+    padding: 0.4rem;
+  }
+
+  /* Ajuste para teclado virtual */
+  .chat-input.focused {
+    position: fixed;
+    bottom: 0;
+    transform: translateY(-env(keyboard-inset-height, 0px));
   }
 }
 
 @media (min-width: 641px) and (max-width: 1024px) {
   .chat-container {
     padding-top: 3.5rem;
+    padding-bottom: 6.5rem;
   }
 
   .chat-messages {
     padding: 0.75rem;
+    gap: 0.75rem;
+    max-height: calc(100vh - 10rem);
   }
 
   .message {
     max-width: 85%;
+    margin-bottom: 0.4rem;
   }
 
   .message-content {
     font-size: 0.85rem;
   }
 
+  .chat-input {
+    padding: 0.6rem 0.75rem;
+    margin: 0 0.75rem 0.75rem;
+  }
+}
+
+@media (min-width: 1025px) {
+  .chat-input {
+    display: flex !important;
+    max-width: 50rem;
+    margin: 0 auto 1.5rem;
+    padding: 1rem 1.5rem;
+    gap: 0.75rem;
+    border-radius: 20px;
+  }
+
   .chat-input input {
-    font-size: 0.9rem;
+    font-size: 1rem;
+    padding: 0.75rem;
+  }
+
+  .mic-btn, .chat-input button {
+    padding: 0.75rem;
+  }
+
+  .mic-icon, .send-icon {
+    font-size: 1.5rem;
+  }
+
+  .message {
+    max-width: 70%;
+    margin-bottom: 0.75rem;
+  }
+
+  .chat-messages {
+    max-height: calc(100vh - 11rem); /* Ajustado para header (4rem) + input (7rem) */
   }
 }
 </style>
