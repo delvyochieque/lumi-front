@@ -2,16 +2,14 @@ const { defineConfig } = require('@vue/cli-service')
 const PreloadPlugin = require('@vue/preload-webpack-plugin')
 
 module.exports = defineConfig({
-  // Configurações básicas
+  publicPath: '/', // Garante que assets são carregados de /
   productionSourceMap: false,
   filenameHashing: true,
 
-  // Configurações de otimização
   chainWebpack: config => {
-    // 1. Configuração de code splitting
     config.optimization.splitChunks({
       chunks: 'all',
-      maxSize: 244 * 1024, // 244KB
+      maxSize: 244 * 1024,
       cacheGroups: {
         vendors: {
           test: /[\\/]node_modules[\\/]/,
@@ -21,7 +19,6 @@ module.exports = defineConfig({
       }
     })
 
-    // 2. Configuração do plugin preload (CORRIGIDO)
     config.plugin('preload')
       .use(PreloadPlugin, [{
         rel: 'preload',
@@ -29,11 +26,9 @@ module.exports = defineConfig({
         fileBlacklist: [/\.map$/, /hot-update\.js$/]
       }])
 
-    // 3. Remove prefetch padrão
     config.plugins.delete('prefetch')
   },
 
-  // Outras configurações
   css: {
     extract: true
   }
