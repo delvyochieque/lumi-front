@@ -613,7 +613,7 @@ export default {
   }
 
   .chat-messages {
-    max-height: calc(100vh - 11rem); /* Ajustado para header (4rem) + input (7rem) */
+    max-height: calc(100vh - 11rem); /* Ajustei para header (4rem) + input (7rem) */
   }
 }
 </style>
