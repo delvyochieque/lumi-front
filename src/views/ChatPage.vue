@@ -443,6 +443,7 @@ export default {
 .chat-input input {
   width: 70%;
   padding: 0.5rem;
+  margin-bottom: 10px
   border: none;
   border-radius: 0.3rem;
   background: #FFFFFF;
