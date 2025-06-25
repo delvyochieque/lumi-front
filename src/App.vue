@@ -71,13 +71,15 @@ body {
   background-size: cover;
   background-position: center;
 }
-
 .main-content {
-  padding-top: 5rem; /* Ajustado para header responsivo */
-  min-height: 100vh;
-  box-sizing: border-box;
-  flex: 1;
+  padding-top: 4rem;/* Ajustado para header responsivo */
+  min-height: calc(100vh - 4rem);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden; 
 }
+
+
 
 /* Media Queries para Responsividade */
 @media (max-width: 640px) {
