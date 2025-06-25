@@ -41,6 +41,8 @@
         @keyup.enter="sendMessage"
         placeholder="Digite sua mensagem..."
         :disabled="isSending || isListening"
+        @focus="onInputFocus"
+        @blur="onInputBlur"
       />
       <button @click="sendMessage" :disabled="isSending || !newMessage.trim()">
         <span class="send-icon">▶</span>
@@ -64,6 +66,7 @@ export default {
       sessao_id: null,
       mediaRecorder: null,
       audioChunks: [],
+      isInputFocused: false,
     };
   },
   watch: {
@@ -180,10 +183,20 @@ export default {
     scrollToBottom() {
       this.$nextTick(() => {
         const container = this.$refs.messagesContainer;
-        if (container) {
-          container.scrollTop = container.scrollHeight;
+        if (container && !this.isInputFocused) {
+          const isNearBottom = container.scrollHeight - container.scrollTop <= container.clientHeight + 100;
+          if (isNearBottom) {
+            container.scrollTop = container.scrollHeight;
+          }
         }
       });
+    },
+    onInputFocus() {
+      this.isInputFocused = true;
+    },
+    onInputBlur() {
+      this.isInputFocused = false;
+      this.scrollToBottom();
     },
     async speakMessage(text) {
       try {
@@ -319,26 +332,42 @@ export default {
   background: #333;
   color: #FFFFFF;
   padding-top: 4rem; /* Espaço para AppHeader.vue */
-  padding-bottom: 5rem; /* Espaço para chat-input */
+  padding-bottom: 6rem; /* Espaço para chat-input */
   box-sizing: border-box;
+  position: relative; /* Base para posicionamento relativo */
 }
 
 .chat-messages {
-  flex: 1; /* Ocupa espaço restante */
+  flex: 1;
   padding: 1rem;
   overflow-y: auto; /* Ativa scroll vertical */
   display: flex;
   flex-direction: column;
   gap: 20px;
-  max-height: calc(100vh - 9rem); /* Subtrai header e input */
+  max-height: calc(100vh - 10rem); /* Ajustado para header (4rem) + input (6rem) */
   min-height: 0; /* Evita compressão */
+  scrollbar-width: auto;
+  scrollbar-color: #D3B911 #333;
+}
+
+.chat-messages::-webkit-scrollbar {
+  width: 8px;
+}
+
+.chat-messages::-webkit-scrollbar-track {
+  background: #333;
+}
+
+.chat-messages::-webkit-scrollbar-thumb {
+  background: #D3B911;
+  border-radius: 4px;
 }
 
 .message {
   display: flex;
   max-width: 90%;
   width: 100%;
-  margin-bottom: 0.5rem; /* Margem entre mensagens */
+  margin-bottom: 0.5rem;
 }
 
 .user-message {
@@ -416,11 +445,17 @@ export default {
   align-items: center;
   border-radius: 20px;
   margin: 0 1rem 1rem;
-  position: fixed;
-  bottom: 0;
+  width: calc(100% - 2rem); /* Ajusta largura para margens */
+  position: absolute; /* Troca para posicionamento absoluto */
+  bottom: 1rem; /* Distância da borda inferior */
   left: 0;
-  right: 0;
-  z-index: 10;
+  z-index: 10; /* Garante que fique acima */
+  box-sizing: border-box;
+  transition: transform 0.3s ease; /* Suave transição para teclado */
+}
+
+.chat-input.focused {
+  transform: translateY(-env(keyboard-inset-height, 0px)); /* Ajusta para teclado virtual */
 }
 
 .mic-btn {
@@ -483,13 +518,13 @@ export default {
 @media (max-width: 640px) {
   .chat-container {
     padding-top: 3rem;
-    padding-bottom: 4rem;
+    padding-bottom: 7rem; /* Espaço para input e teclado */
   }
 
   .chat-messages {
     padding: 0.5rem;
     gap: 0.5rem;
-    max-height: calc(100vh - 7rem); /* Ajusta para header e input menores */
+    max-height: calc(100vh - 10rem); /* Ajustado para header (3rem) + input (7rem) */
   }
 
   .message {
@@ -513,33 +548,25 @@ export default {
   .chat-input {
     padding: 0.4rem 0.5rem;
     margin: 0 0.5rem 0.5rem;
-    gap: 0.3rem;
+    width: calc(100% - 1rem);
+    bottom: 0.5rem;
   }
 
-  .mic-btn, .chat-input button {
-    padding: 0.4rem;
-  }
-
-  .mic-icon, .send-icon {
-    font-size: 1rem;
-  }
-
-  .chat-input input {
-    font-size: 0.8rem;
-    padding: 0.4rem;
+  .chat-input.focused {
+    transform: translateY(-env(keyboard-inset-height, 0px));
   }
 }
 
 @media (min-width: 641px) and (max-width: 1024px) {
   .chat-container {
     padding-top: 3.5rem;
-    padding-bottom: 4.5rem;
+    padding-bottom: 6.5rem;
   }
 
   .chat-messages {
     padding: 0.75rem;
     gap: 0.75rem;
-    max-height: calc(100vh - 8rem);
+    max-height: calc(100vh - 10rem);
   }
 
   .message {
@@ -554,17 +581,18 @@ export default {
   .chat-input {
     padding: 0.6rem 0.75rem;
     margin: 0 0.75rem 0.75rem;
+    width: calc(100% - 1.5rem);
+    bottom: 0.75rem;
   }
 }
 
 @media (min-width: 1025px) {
   .chat-input {
-    display: flex !important;
     max-width: 50rem;
     margin: 0 auto 1.5rem;
     padding: 1rem 1.5rem;
     gap: 0.75rem;
-    border-radius: 20px;
+    width: auto; /* Remove largura fixa em desktop */
   }
 
   .chat-input input {
@@ -586,7 +614,7 @@ export default {
   }
 
   .chat-messages {
-    max-height: calc(100vh - 10rem); /* Ajusta para header e input maiores */
+    max-height: calc(100vh - 11rem); /* Ajustado para header (4rem) + input (7rem) */
   }
 }
 </style>

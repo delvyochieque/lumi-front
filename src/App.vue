@@ -72,14 +72,12 @@ body {
   background-position: center;
 }
 .main-content {
-  padding-top: 4rem;/* Ajustado para header responsivo */
+  padding-top: 4rem;
   min-height: calc(100vh - 4rem);
   display: flex;
   flex-direction: column;
-  overflow: hidden; 
+  overflow: hidden;
 }
-
-
 
 /* Media Queries para Responsividade */
 @media (max-width: 640px) {
