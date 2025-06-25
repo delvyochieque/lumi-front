@@ -441,7 +441,7 @@ export default {
 }
 
 .chat-input input {
-  flex: 1;
+  width: 70%;
   padding: 0.5rem;
   border: none;
   border-radius: 0.3rem;
@@ -449,6 +449,7 @@ export default {
   color: #000;
   font-size: 0.9rem;
 }
+
 
 .chat-input input:focus {
   outline: none;
