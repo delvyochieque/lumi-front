@@ -308,16 +308,16 @@ export default {
   },
 };
 </script>
-
 <style scoped>
 .chat-container {
   display: flex;
   flex-direction: column;
-  min-height: 100vh; /* Garante altura total */
+  min-height: 100vh;
   background: #1E1E1E;
   color: #FFFFFF;
-  padding-top: 4rem; /* Ajuste para o header */
+  padding-top: 4rem;
   box-sizing: border-box;
+  position: relative;
 }
 
 .chat-messages {
@@ -328,6 +328,7 @@ export default {
   flex-direction: column;
   gap: 1rem;
   align-items: center;
+  margin-bottom: 5rem; /* espaço para o input fixo */
 }
 
 .message {
@@ -403,43 +404,27 @@ export default {
   }
 }
 
+/* INPUT FIXO NO FUNDO */
 .chat-input {
-  display: flex; /* Garante visibilidade */
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
   padding: 0.5rem 1rem;
   background: #D3B911;
   border-top: 1px solid #D3B911;
   gap: 0.5rem;
-  align-items: center;
-  border-radius: 1.5rem;
-  margin: 0 1rem 1rem;
-  position: sticky; /* Mantém no fundo */
+  position: fixed;
   bottom: 0;
-  z-index: 10;
-}
-
-.mic-btn {
-  background: transparent;
-  border: none;
-  cursor: pointer;
-  padding: 0.5rem;
-}
-
-.mic-btn:hover:not(:disabled) {
-  opacity: 0.8;
-}
-
-.mic-btn:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-}
-
-.mic-icon {
-  font-size: 1.2rem;
-  color: #000;
+  left: 0;
+  right: 0;
+  z-index: 20;
+  max-width: 100vw;
+  box-sizing: border-box;
+  margin-bottom: 20px;
 }
 
 .chat-input input {
-  flex: 1;
+  flex: 0 0 70%;
   padding: 0.5rem;
   border: none;
   border-radius: 0.3rem;
@@ -473,10 +458,31 @@ export default {
   color: #000;
 }
 
-/* Media Queries para Responsividade */
+.mic-btn {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 0.5rem;
+}
+
+.mic-btn:hover:not(:disabled) {
+  opacity: 0.8;
+}
+
+.mic-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.mic-icon {
+  font-size: 1.2rem;
+  color: #000;
+}
+
+/* Responsividade */
 @media (max-width: 640px) {
   .chat-container {
-    padding-top: 3rem; /* Ajuste para header menor */
+    padding-top: 3rem;
   }
 
   .chat-messages {
@@ -493,31 +499,8 @@ export default {
     font-size: 0.8rem;
   }
 
-  .speak-btn {
-    padding: 0.2rem;
-  }
-
-  .speak-icon {
-    font-size: 0.8rem;
-  }
-
-  .chat-input {
-    padding: 0.4rem 0.5rem;
-    margin: 0 0.5rem 0.5rem;
-    gap: 0.3rem;
-  }
-
-  .mic-btn, .chat-input button {
-    padding: 0.4rem;
-  }
-
-  .mic-icon, .send-icon {
-    font-size: 1rem;
-  }
-
   .chat-input input {
     font-size: 0.8rem;
-    padding: 0.4rem;
   }
 }
 
@@ -538,16 +521,8 @@ export default {
     font-size: 0.85rem;
   }
 
-  .chat-input {
-    padding: 0.6rem 0.75rem;
-    margin: 0 0.75rem 0.75rem;
-  }
-}
-
-@media (min-width: 1025px) {
-  .chat-input {
-   
-   
+  .chat-input input {
+    font-size: 0.9rem;
   }
 }
 </style>
